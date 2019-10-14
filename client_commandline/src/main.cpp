@@ -67,6 +67,8 @@ int main(int argc, const char* argv[]) {
 			deviceOffsets(argc, argv);
 		} else if (std::strcmp(argv[1], "benchmarkipc") == 0) {
 			benchmarkIPC(argc, argv);
+		} else if (std::strcmp(argv[1], "autodevicerotation") == 0) {
+			autoDeviceRotation(argc, argv);
 		} else {
 			throw std::runtime_error("Error: Unknown command.");
 		}

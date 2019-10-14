@@ -3,6 +3,7 @@
 #include <openvr.h>
 #include <vrinputemulator.h>
 #include <openvr_math.h>
+#include <windows.h>
 
 
 void listDevices(int argc, const char* argv[]) {
@@ -450,6 +451,37 @@ void setDeviceRotation(int argc, const char* argv[]) {
 	pose.poseIsValid = true;
 	pose.result = vr::TrackingResult_Running_OK;
 	inputEmulator.setVirtualDevicePose(deviceId, pose);
+}
+
+void autoDeviceRotation(int argc, const char* argv[]) {
+	if (argc > 2 && std::strcmp(argv[2], "help") == 0) {
+		std::stringstream ss;
+		ss << "Usage: client_commandline.exe setdevicerotation <virtualId> <yaw> <pitch> <roll>";
+		throw std::runtime_error(ss.str());
+	}
+	else if (argc < 9) {
+		throw std::runtime_error("Error: Too few arguments.");
+	}
+	uint32_t deviceId = std::atoi(argv[2]);
+	float yaw = (float)std::atof(argv[3]);
+	float pitch = (float)std::atof(argv[4]);
+	float roll = (float)std::atof(argv[5]);
+	// 仮想コントローラー回転ループ
+	while (true)
+	{
+		yaw = yaw + (float)std::atof(argv[6]);
+		pitch = pitch + (float)std::atof(argv[7]);
+		roll = roll + (float)std::atof(argv[8]);
+		vrinputemulator::VRInputEmulator inputEmulator;
+		inputEmulator.connect();
+		auto pose = inputEmulator.getVirtualDevicePose(deviceId);
+		pose.qRotation = vrmath::quaternionFromYawPitchRoll(yaw, pitch, roll);
+		pose.poseIsValid = true;
+		pose.result = vr::TrackingResult_Running_OK;
+		inputEmulator.setVirtualDevicePose(deviceId, pose);
+		
+	}
+	
 }
 
 void deviceOffsets(int argc, const char * argv[]) {
