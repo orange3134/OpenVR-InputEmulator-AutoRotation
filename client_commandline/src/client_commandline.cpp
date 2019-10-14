@@ -456,7 +456,7 @@ void setDeviceRotation(int argc, const char* argv[]) {
 void autoDeviceRotation(int argc, const char* argv[]) {
 	if (argc > 2 && std::strcmp(argv[2], "help") == 0) {
 		std::stringstream ss;
-		ss << "Usage: client_commandline.exe setdevicerotation <virtualId> <yaw> <pitch> <roll>";
+		ss << "Usage: client_commandline.exe autodevicerotation <virtualId> <yaw> <pitch> <roll> <yawSpeed> <pitchSpeed> <rollSpeed>";
 		throw std::runtime_error(ss.str());
 	}
 	else if (argc < 9) {
