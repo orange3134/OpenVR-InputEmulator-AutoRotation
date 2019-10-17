@@ -441,9 +441,9 @@ void setDeviceRotation(int argc, const char* argv[]) {
 		throw std::runtime_error("Error: Too few arguments.");
 	}
 	uint32_t deviceId = std::atoi(argv[2]);
-	float yaw = (float)std::atof(argv[3]);
-	float pitch = (float)std::atof(argv[4]);
-	float roll = (float)std::atof(argv[5]);
+	float yaw = (float)std::atof(argv[3]) / 1000;
+	float pitch = (float)std::atof(argv[4]) / 1000;
+	float roll = (float)std::atof(argv[5]) / 1000;
 	vrinputemulator::VRInputEmulator inputEmulator;
 	inputEmulator.connect();
 	auto pose = inputEmulator.getVirtualDevicePose(deviceId);
@@ -463,22 +463,32 @@ void autoDeviceRotation(int argc, const char* argv[]) {
 		throw std::runtime_error("Error: Too few arguments.");
 	}
 	uint32_t deviceId = std::atoi(argv[2]);
-	float yaw = (float)std::atof(argv[3]);
-	float pitch = (float)std::atof(argv[4]);
-	float roll = (float)std::atof(argv[5]);
+	// 変数 回転の初期値
+	float yaw = (float)std::atof(argv[3]) / 1000;
+	float pitch = (float)std::atof(argv[4]) / 1000;
+	float roll = (float)std::atof(argv[5]) / 1000;
+	// 変数 回転スピード
+	float yawSpeed = (float)std::atof(argv[6]) / 1000;
+	float pitchSpeed = (float)std::atof(argv[7]) / 1000;
+	float rollSpeed = (float)std::atof(argv[8]) / 1000;
+
+	vrinputemulator::VRInputEmulator inputEmulator;
+	inputEmulator.connect();
+
 	// 仮想コントローラー回転ループ
 	while (true)
 	{
-		yaw = yaw + (float)std::atof(argv[6]);
-		pitch = pitch + (float)std::atof(argv[7]);
-		roll = roll + (float)std::atof(argv[8]);
-		vrinputemulator::VRInputEmulator inputEmulator;
-		inputEmulator.connect();
+		// 回転の初期値に回転スピードを足す
+		yaw = yaw + yawSpeed;
+		pitch = pitch + pitchSpeed;
+		roll = roll + rollSpeed;
+
 		auto pose = inputEmulator.getVirtualDevicePose(deviceId);
 		pose.qRotation = vrmath::quaternionFromYawPitchRoll(yaw, pitch, roll);
 		pose.poseIsValid = true;
 		pose.result = vr::TrackingResult_Running_OK;
 		inputEmulator.setVirtualDevicePose(deviceId, pose);
+		Sleep(8);
 		
 	}
 	
